@@ -1,0 +1,38 @@
+import serial #Import Serial Library
+import time
+# Change to your port.
+futek_serial_data = serial.Serial('COM7', 9600)
+arduino = serial.Serial('COM6', 9600, timeout = 1)
+############## SET YOUR DESIRED TENSION  ###################
+tension_set = 1
+#########################################################
+tol = 0.1
+# Get sensor output and convert into a float value in N.
+while (tension_set != 0):
+  sensor_output = futek_serial_data.readline()
+  tension = sensor_output.split()[0]
+  # futek sensor gives out load cell output in binary. 
+  tension_lb = float(tension.decode("utf-8"))
+  # fetek sensor output is in lb. Need to convert to N.
+  tension_N = 4.448 * tension_lb
+  # Keep running the acutation until the sensor reads 
+  # tension_set within the tolerance.
+  while(tension_N < (tension_set-tol) or tension_N > (tension_set+tol)):
+    sensor_output = futek_serial_data.readline()
+    tension = sensor_output.split()[0]
+    tension_lb = float(tension.decode("utf-8"))
+    tension_N = 4.448 * tension_lb
+    if (tension_N < (tension_set-tol)):
+      #Pull cable:
+      # Give dirPin LOW (0)
+      command = str.encode('1')
+    elif (tension_N > (tension_set+tol)):
+      #Loose cable:
+      command = str.encode('0')
+    arduino.write(command)
+    print('Sensor Value: ',tension_N)     
+  # You can assign the next tension value after the tension_set is achieved. 
+  tension_set=float(input('Set New Tension Value in N '
+                          'or type 0 if you want to stop: '))
+arduino.close()
+futek_serial_data.close() 
