@@ -1,1 +1,2 @@
-# Linearactuator
+# Linear actuator
+I, along with Seungbeom Ha and Seong Hyo Ahn, wrote this script to automate the process of a linear actuator of a robot pairing it with a stepper motor. Before this script, the controlling of this soft robot was manual, so it was laborious, tedious and led to imprecise movements. After, the process of controlling the robot was efficient and automated. This python script was used to communicate with an Arduino microcontroller to provide feedback to control the robot. 
